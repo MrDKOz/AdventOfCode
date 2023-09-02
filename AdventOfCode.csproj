@@ -17,4 +17,14 @@
         <PackageReference Include="coverlet.collector" Version="3.2.0"/>
     </ItemGroup>
 
+
+
+
+    <ItemGroup>
+      <None Remove="2022\Files\day1.txt" />
+      <Content Include="2022\Files\day1.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
