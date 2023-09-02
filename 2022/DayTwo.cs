@@ -51,12 +51,15 @@ public class Match
     }
 }
 
+/// <summary>
+/// Puzzle link: https://adventofcode.com/2022/day/2
+/// </summary>
 public class DayTwo
 {
     private readonly List<string> _puzzleInput = PuzzleInput.Load(2022, 2);
     private readonly ScoreLookup _scoreLookup = new();
 
-    [Test, Description("What would your total score be if everything goes exactly according to your strategy guide?")]
+    [Test]
     public void PartOne()
     {
         var totalScore = _puzzleInput.Sum(moveAndResponse => _scoreLookup.GetScore(moveAndResponse[0], moveAndResponse[2]));
@@ -64,7 +67,7 @@ public class DayTwo
         Console.WriteLine($"Answer: {totalScore}");
     }
 
-    [Test, Description("Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?")]
+    [Test]
     public void PartTwo()
     {
         var totalScore = _puzzleInput.Sum(moveAndResponse => _scoreLookup.GetScore(moveAndResponse[0], moveAndResponse[2], true));

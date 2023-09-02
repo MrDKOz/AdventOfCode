@@ -14,6 +14,9 @@ public class Elf
     public int SumOfCalories => Calories.Sum();
 }
 
+/// <summary>
+/// Puzzle link: https://adventofcode.com/2022/day/1
+/// </summary>
 public class DayOne
 {
     private Expedition? _expedition;
@@ -50,7 +53,7 @@ public class DayOne
         return expedition;
     }
 
-    [Test, Description("Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?")]
+    [Test]
     public void PartOne()
     {
         var sum = _expedition!.Elves.Max(e => e.SumOfCalories);
@@ -58,7 +61,7 @@ public class DayOne
         Console.WriteLine($"Answer: {sum}");
     }
 
-    [Test, Description("Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?")]
+    [Test]
     public void PartTwo()
     {
         var sum = _expedition!.Elves
