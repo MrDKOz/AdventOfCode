@@ -20,7 +20,7 @@ public class Elf
 public class DayOne
 {
     private Expedition? _expedition;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -57,7 +57,7 @@ public class DayOne
     public void PartOne()
     {
         var sum = _expedition!.Elves.Max(e => e.SumOfCalories);
-        
+
         Console.WriteLine($"Answer: {sum}");
     }
 
@@ -68,7 +68,7 @@ public class DayOne
             .OrderByDescending(e => e.SumOfCalories)
             .Take(3)
             .Sum(e => e.SumOfCalories);
-        
+
         Console.WriteLine($"Answer: {sum}");
     }
 }

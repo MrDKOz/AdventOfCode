@@ -32,7 +32,7 @@ public class DayFour
     public void PartOne()
     {
         var totalCount = _assignments.Count(a => a.FullOverlap);
-        
+
         Console.WriteLine($"Answer: {totalCount}");
     }
 
@@ -40,7 +40,7 @@ public class DayFour
     public void PartTwo()
     {
         var totalCount = _assignments.Count(a => a.PartialOverlap);
-        
+
         Console.WriteLine($"Answer: {totalCount}");
     }
 }

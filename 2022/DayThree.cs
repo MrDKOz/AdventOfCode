@@ -12,7 +12,7 @@ internal class RuckSack
     private char CommonItem => CompartmentOne.Intersect(CompartmentTwo).Single();
     public int CommonItemPriority => FetchPriority(CommonItem);
     private static int FetchPriority(char character) => character % 32 + (char.IsUpper(character) ? 26 : 0);
-    
+
     public RuckSack(string allItems)
     {
         AllItems = allItems;
