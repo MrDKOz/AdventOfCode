@@ -2,11 +2,13 @@
 
 public class Warehouse
 {
+    private bool PartTwo { get; set; }
     private List<Stack<string>> Stacks { get; } = new();
     private List<Instruction> Instructions { get; } = new();
 
-    public Warehouse(List<string> input)
+    public Warehouse(List<string> input, bool partTwo = false)
     {
+        PartTwo = partTwo;
         GetInitialState(input);
         ImportInstructions(input);
         ProcessInstructions();
@@ -76,14 +78,30 @@ public class Warehouse
         {
             var sourceStack = Stacks[instruction.SourceStack];
             var destinationStack = Stacks[instruction.DestinationStack];
-
-            for (var i = 0; i < instruction.CrateCount; i++)
+            
+            if (PartTwo)
             {
-                destinationStack.Push(sourceStack.Pop());
+                var ordered = new Stack<string>();
+                
+                for (var quantity = 0; quantity < instruction.CrateCount; quantity++)
+                {
+                    ordered.Push(sourceStack.Pop());
+                }
+                
+                while (ordered.Any()) {
+                    destinationStack.Push(ordered.Pop());
+                }
+            }
+            else
+            {
+                for (var i = 0; i < instruction.CrateCount; i++)
+                {
+                    destinationStack.Push(sourceStack.Pop());
+                }
             }
         }
     }
-    
+
     public string GetTopCrateLabels() => Stacks.Aggregate(string.Empty, (current, stack) => current + stack.Peek());
 }
 
@@ -100,8 +118,19 @@ public class Instruction
 public class DayFive
 {
     private static readonly List<string> PuzzleInput = Helpers.PuzzleInput.Load(2022, 5);
-    private readonly Warehouse _warehouse = new(PuzzleInput);
+    private Warehouse? _warehouse;
 
     [Test]
-    public void PartOne() => Console.WriteLine($"Answer: {_warehouse.GetTopCrateLabels()}");
+    public void PartOne()
+    {
+        _warehouse = new Warehouse(PuzzleInput);
+        Console.WriteLine($"Answer: {_warehouse.GetTopCrateLabels()}");
+    }
+
+    [Test]
+    public void PartTwo()
+    {
+        _warehouse = new Warehouse(PuzzleInput, true);
+        Console.WriteLine($"Answer: {_warehouse.GetTopCrateLabels()}");
+    }
 }
