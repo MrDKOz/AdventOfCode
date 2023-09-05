@@ -1,0 +1,107 @@
+﻿namespace AdventOfCode._2022;
+
+public class Warehouse
+{
+    private List<Stack<string>> Stacks { get; } = new();
+    private List<Instruction> Instructions { get; } = new();
+
+    public Warehouse(List<string> input)
+    {
+        GetInitialState(input);
+        ImportInstructions(input);
+        ProcessInstructions();
+    }
+
+    private void GetInitialState(List<string> input)
+    {
+        var bottomRowIndex = 0;
+        GetStackCount();
+        PopulateInitialStacks();
+
+        return;
+
+        void GetStackCount()
+        {
+            foreach (var line in input)
+            {
+                bottomRowIndex++;
+                var tmpLine = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                if (tmpLine.Length < 1 || tmpLine[0] != "1") continue;
+
+                for (var i = 0; i < tmpLine.Length; i++)
+                {
+                    Stacks.Add(new Stack<string>());
+                }
+
+                bottomRowIndex -= 2;
+                break;
+            }
+        }
+
+        void PopulateInitialStacks()
+        {
+            for (var i = bottomRowIndex; i >= 0; i--)
+            {
+                var line = input[i];
+
+                for (var s = 0; s < Stacks.Count; s++)
+                {
+                    var crateLabel = line.Substring(1 + s * 4, 1);
+                    if (string.IsNullOrWhiteSpace(crateLabel)) continue;
+
+                    Stacks[s].Push(crateLabel);
+                }
+            }
+        }
+    }
+
+    private void ImportInstructions(IEnumerable<string> input)
+    {
+        foreach (var tempLine in from line in input where line.StartsWith("move")
+                 select line.Split(" ", StringSplitOptions.RemoveEmptyEntries))
+        {
+            Instructions.Add(new Instruction
+            {
+                CrateCount = Convert.ToInt32(tempLine[1]),
+                SourceStack = Convert.ToInt32(tempLine[3]) - 1,
+                DestinationStack = Convert.ToInt32(tempLine[5]) - 1
+            });
+        }
+    }
+
+    private void ProcessInstructions()
+    {
+        foreach (var instruction in Instructions)
+        {
+            var sourceStack = Stacks[instruction.SourceStack];
+            var destinationStack = Stacks[instruction.DestinationStack];
+
+            for (var i = 0; i < instruction.CrateCount; i++)
+            {
+                destinationStack.Push(sourceStack.Pop());
+            }
+        }
+    }
+    
+    public string GetTopCrateLabels() => Stacks.Aggregate(string.Empty, (current, stack) => current + stack.Peek());
+}
+
+public class Instruction
+{
+    public int SourceStack { get; init; }
+    public int DestinationStack { get; init; }
+    public int CrateCount { get; init; }
+}
+
+/// <summary>
+/// Puzzle link: https://adventofcode.com/2022/day/5
+/// </summary>
+public class DayFive
+{
+    private static readonly List<string> PuzzleInput = Helpers.PuzzleInput.Load(2022, 5);
+    private readonly Warehouse _warehouse = new(PuzzleInput);
+
+    [Test]
+    public void PartOne() => Console.WriteLine($"Answer: {_warehouse.GetTopCrateLabels()}");
+}
