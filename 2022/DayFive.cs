@@ -2,7 +2,7 @@
 
 public class Warehouse
 {
-    private bool PartTwo { get; set; }
+    private bool PartTwo { get; }
     private List<Stack<string>> Stacks { get; } = new();
     private List<Instruction> Instructions { get; } = new();
 
