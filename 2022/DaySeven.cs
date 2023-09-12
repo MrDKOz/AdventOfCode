@@ -5,7 +5,7 @@ public class FileSystem
     private const bool DebugEnabled = false;
     private const long TotalSpace = 70000000;
     private const long RequiredSpace = 30000000;
-    public long FreeSpace => TotalSpace - Root!.Size;
+    private long FreeSpace => TotalSpace - Root!.Size;
     public long NeedToFree => RequiredSpace - FreeSpace;
     public Directory? Root { get; } = new("/");
     private Directory? CurrentDirectory { get; set; }
