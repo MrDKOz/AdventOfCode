@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Helpers;
+﻿using System.Text.RegularExpressions;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode._2023;
 
@@ -15,39 +16,106 @@ public class DayOne
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day One, Part One Answer: {_calibrationValues!.ProcessedValues.Sum()}");
+        _calibrationValues?.Process();
+        Console.WriteLine($"Day One, Part One Answer: {_calibrationValues!.FirstAndLastDigits.Sum()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        
+        _calibrationValues?.Process(true);
+        Console.WriteLine($"Day One, Part Two Answer: {_calibrationValues!.FirstAndLastDigits.Sum()}");
     }
 }
 
-internal class CalibrationValues
+internal partial class CalibrationValues
 {
     private readonly List<string> _rawInput;
-    public readonly List<int> ProcessedValues = new();
+    public readonly List<int> FirstAndLastDigits = new();
 
     public CalibrationValues(List<string> rawInput)
     {
         _rawInput = rawInput;
+    }
 
-        ExtractFirstAndLastDigits();
+    public void Process(bool partTwo = false)
+    {
+        if (partTwo)
+        {
+            ExtractFirstAndLastDigits();
+        }
+        else
+        {
+            ExtractFirstAndLastDigitsV2();
+        }
     }
 
     private void ExtractFirstAndLastDigits()
     {
-        
         foreach (var line in _rawInput)
         {
             var firstDigit = FindFirstDigit(line);
             var lastDigit = FindLastDigit(line);
             
-            ProcessedValues.Add(Convert.ToInt32($"{firstDigit}{lastDigit}"));
+            FirstAndLastDigits.Add(Convert.ToInt32($"{firstDigit}{lastDigit}"));
         }
     }
+
+    private void ExtractFirstAndLastDigitsV2()
+    {
+        var regex = FindNumbersAsWords();
+
+        foreach (var line in _rawInput)
+        {
+            var matches = regex.Matches(line);
+
+            var a = GetValue(matches.First());
+            var b = GetValue(matches.Last());
+            
+            FirstAndLastDigits.Add(int.Parse($"{a}{b}"));
+        }
+    }
+    
+    private int? GetValue(Match match)
+    {
+        var value = GetMatchedValue(match);
+
+        if(StringToInt.ContainsKey(value))
+        {
+            StringToInt.TryGetValue(value, out var convertedValue);
+            return convertedValue;
+        }
+
+        _ = int.TryParse(value, out var result);
+        return result;
+    }
+    
+    private string GetMatchedValue(Match match)
+    {
+        if (!string.IsNullOrEmpty(match.Value))
+        {
+            return match.Value;
+        }
+
+        var result = match.Groups.Values.FirstOrDefault(x => !string.IsNullOrEmpty(x.Value));
+
+        return result?.Value ?? string.Empty;
+    }
+
+    private static readonly Dictionary<string, int> StringToInt = new()
+    {
+        { "zero", 0 },
+        { "one", 1 },
+        { "two", 2 },
+        { "three", 3 },
+        { "four", 4 },
+        { "five", 5 },
+        { "six", 6 },
+        { "seven", 7 },
+        { "eight", 8 },
+        { "nine", 9 }
+    };
+
 
     private static string FindFirstDigit(string input)
     {
@@ -60,4 +128,7 @@ internal class CalibrationValues
     }
 
     private static string FindLastDigit(string input) => FindFirstDigit(new string(input.Reverse().ToArray()));
+
+    [GeneratedRegex("(?<=(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)|(\\d{1}))", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    private static partial Regex FindNumbersAsWords();
 }
