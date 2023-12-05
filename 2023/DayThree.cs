@@ -39,9 +39,9 @@ public class Engine
 
         BuildArray(schematics);
 
-        //PrintOutSchematics();
         FetchPartNumbers();
         CalculateGearRatios();
+        //PrintOutSchematics();
     }
 
     private void BuildArray(IReadOnlyList<string> schematics)
@@ -63,7 +63,14 @@ public class Engine
         {
             for (var y = 0; y < _schematics.GetLength(1); y++)
             {
-                Console.Write(_schematics[x, y]);
+                if (Gears.ValidGearExists(x, y))
+                {
+                    Console.Write("H");
+                }
+                else
+                {
+                    Console.Write(_schematics[x, y]);
+                }
             }
 
             Console.WriteLine();
@@ -90,7 +97,7 @@ public class Engine
                 }
                 else if (partNumber.Length > 0)
                 {
-                    PartNumbers.Add(partNumber.ToString(), x, y, partNumber.Length, partNumberValidated);
+                    PartNumbers.Add(partNumber.ToString(), x, y == 0 ? 140 : y, partNumber.Length, partNumberValidated);
 
                     partNumber.Clear();
                     partNumberValidated = false;
@@ -233,11 +240,12 @@ public class Engine
 
 public class PartNumbers
 {
-    private List<PartNumber> PartNumberList { get; } = new();
+    public List<PartNumber> PartNumberList { get; } = new();
     public List<PartNumber> ValidPartNumbers => PartNumberList.Where(p => p.Valid).ToList();
     public int SumOfValidPartNumbers => ValidPartNumbers.Sum(p => p.Number);
 
-    public void Add(string partNumber, int x, int y, int length, bool partNumberValidated) =>
+    public void Add(string partNumber, int x, int y, int length, bool partNumberValidated)
+    {
         PartNumberList.Add(new PartNumber
         {
             Number = Convert.ToInt32(partNumber),
@@ -245,6 +253,7 @@ public class PartNumbers
             Length = length,
             Valid = partNumberValidated
         });
+    }
 }
 
 public class PartNumber
@@ -257,7 +266,7 @@ public class PartNumber
 
 public class Gears
 {
-    private List<Gear> GearsList { get; } = new();
+    public List<Gear> GearsList { get; } = new();
     private IEnumerable<Gear> ValidGears => GearsList.Where(g => g.Valid).ToList();
     public int GearRatioSum => ValidGears.Sum(g => g.GearRatio);
 
@@ -270,6 +279,19 @@ public class Gears
             Location = new Vector2(x, y)
         });
     }
+
+    public Gear GetGear(int x, int y)
+    {
+        var tmpGear = GearsList.SingleOrDefault(g => (int)g.Location.X == x && (int)g.Location.Y == y);
+
+        if (tmpGear == null) throw new Exception($"Gear not found [{x}x | {y}y].");
+
+        return tmpGear;
+    }
+    
+    public bool ValidGearExists(int x, int y) => GearsList
+        .Where(g => g.Valid)
+        .Any(g => (int)g.Location.X == x && (int)g.Location.Y == y);
 
     public void FindAndAddRatio(Vector2? location, int ratio)
     {
