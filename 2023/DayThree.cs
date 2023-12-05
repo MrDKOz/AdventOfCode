@@ -54,8 +54,7 @@ public class Engine
             }
         }
 
-        Console.WriteLine(
-            $"Completed building array of size {_schematics.GetLength(0)}x{_schematics.GetLength(1)} (HxW).");
+        Console.WriteLine($"Completed building [{_schematics.GetLength(0)}h | {_schematics.GetLength(1)}w]");
     }
 
     private void PrintOutSchematics()
@@ -80,9 +79,7 @@ public class Engine
         {
             for (var y = 0; y < _schematics.GetLength(1); y++)
             {
-                var (isDigit, number) = ProcessPartNumber(x, y);
-
-                if (isDigit)
+                if (ProcessPartNumber(x, y, out var number))
                 {
                     partNumber.Append(number);
 
@@ -103,11 +100,12 @@ public class Engine
 
         return;
 
-        (bool isDigit, string number) ProcessPartNumber(int x, int y)
+        bool ProcessPartNumber(int x, int y, out string character)
         {
-            var character = _schematics[x, y];
+            var rawCharacter = _schematics[x, y];
+            character = rawCharacter.ToString();
 
-            return (char.IsDigit(character), character.ToString());
+            return char.IsDigit(rawCharacter);
         }
 
         bool HasAdjacentSymbols(int x, int y)
@@ -164,11 +162,9 @@ public class Engine
 
             for (var j = y; j < loopEnd; j++)
             {
-                var hasAdjacentGear = CheckForAdjacentGears(x, j);
+                if (!CheckForAdjacentGears(x, j, out var coords)) continue;
 
-                if (!hasAdjacentGear.hasGear) continue;
-
-                Gears.FindAndAddRatio(hasAdjacentGear.coords, validPartNumbers.Number);
+                Gears.FindAndAddRatio(coords, validPartNumbers.Number);
 
                 break;
             }
@@ -176,38 +172,46 @@ public class Engine
 
         return;
 
-        (bool hasGear, Vector2? coords) HasAdjacentGear(int x, int y)
-        {
-            if (!IsInBounds(x, y)) return (false, null);
-
-            var hasGear = _schematics[x, y] == '*';
-            return (hasGear, hasGear ? new Vector2(x, y) : null);
-        }
-
-        (bool hasGear, Vector2? coords) CheckForAdjacentGears(int x, int y)
+        bool CheckForAdjacentGears(int x, int y, out Vector2? coords)
         {
             foreach (Directions direction in Enum.GetValues(typeof(Directions)))
             {
                 var isValid = direction switch
                 {
-                    Directions.North => HasAdjacentGear(x - 1, y),
-                    Directions.NorthEast => HasAdjacentGear(x - 1, y + 1),
-                    Directions.East => HasAdjacentGear(x, y + 1),
-                    Directions.SouthEast => HasAdjacentGear(x + 1, y + 1),
-                    Directions.South => HasAdjacentGear(x + 1, y),
-                    Directions.SouthWest => HasAdjacentGear(x + 1, y - 1),
-                    Directions.West => HasAdjacentGear(x, y - 1),
-                    Directions.NorthWest => HasAdjacentGear(x - 1, y - 1),
+                    Directions.North => HasAdjacentGear(x - 1, y, out coords),
+                    Directions.NorthEast => HasAdjacentGear(x - 1, y + 1, out coords),
+                    Directions.East => HasAdjacentGear(x, y + 1, out coords),
+                    Directions.SouthEast => HasAdjacentGear(x + 1, y + 1, out coords),
+                    Directions.South => HasAdjacentGear(x + 1, y, out coords),
+                    Directions.SouthWest => HasAdjacentGear(x + 1, y - 1, out coords),
+                    Directions.West => HasAdjacentGear(x, y - 1, out coords),
+                    Directions.NorthWest => HasAdjacentGear(x - 1, y - 1, out coords),
                     _ => throw new Exception($"Unknown direction {direction}.")
                 };
 
-                if (isValid.hasGear)
+                if (isValid)
                 {
                     return isValid;
                 }
             }
-            
-            return (false, null);
+
+            coords = null;
+            return false;
+        }
+
+        bool HasAdjacentGear(int x, int y, out Vector2? coords)
+        {
+            coords = null;
+
+            if (!IsInBounds(x, y)) return false;
+
+            var hasGear = _schematics[x, y] == '*';
+            if (hasGear)
+            {
+                coords = new Vector2(x, y);
+            }
+
+            return hasGear;
         }
     }
 
@@ -233,8 +237,7 @@ public class PartNumbers
     public List<PartNumber> ValidPartNumbers => PartNumberList.Where(p => p.Valid).ToList();
     public int SumOfValidPartNumbers => ValidPartNumbers.Sum(p => p.Number);
 
-    public void Add(string partNumber, int x, int y, int length, bool partNumberValidated)
-    {
+    public void Add(string partNumber, int x, int y, int length, bool partNumberValidated) =>
         PartNumberList.Add(new PartNumber
         {
             Number = Convert.ToInt32(partNumber),
@@ -242,7 +245,6 @@ public class PartNumbers
             Length = length,
             Valid = partNumberValidated
         });
-    }
 }
 
 public class PartNumber
