@@ -97,7 +97,12 @@ public class Engine
                 }
                 else if (partNumber.Length > 0)
                 {
-                    PartNumbers.Add(partNumber.ToString(), x, y == 0 ? 140 : y, partNumber.Length, partNumberValidated);
+                    var tmpPartNumber = partNumber.ToString();
+                    var tmpX = y == 0 ? x - 1 : x;
+                    var tmpY = y == 0 ? _schematics.GetLength(1) : y;
+                    var tmpLength = partNumber.Length;
+                    
+                    PartNumbers.Add(tmpPartNumber, tmpX, tmpY, tmpLength, partNumberValidated);
 
                     partNumber.Clear();
                     partNumberValidated = false;
@@ -246,10 +251,15 @@ public class PartNumbers
 
     public void Add(string partNumber, int x, int y, int length, bool partNumberValidated)
     {
+        var tmpLocation = new Vector2(x, y - length);
+
+        if (tmpLocation.X < 0 || tmpLocation.Y < 0)
+            throw new Exception($"Invalid location [{tmpLocation.X}x | {tmpLocation.Y}y].");
+        
         PartNumberList.Add(new PartNumber
         {
             Number = Convert.ToInt32(partNumber),
-            Location = new Vector2(x, y - length),
+            Location = tmpLocation,
             Length = length,
             Valid = partNumberValidated
         });
