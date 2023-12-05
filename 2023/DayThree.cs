@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Helpers;
+﻿using System.Numerics;
+using AdventOfCode.Helpers;
 
 namespace AdventOfCode._2023;
 
@@ -32,6 +33,7 @@ public class Engine
     public List<int> InvalidValidPartNumbers { get; } = new();
     public int SumOfValidPartNumbers => ValidPartNumbers.Sum();
     public int SumOfInvalidValidPartNumbers => InvalidValidPartNumbers.Sum();
+    private HashSet<Vector2> Gears { get; } = new();
 
     public Engine(IReadOnlyList<string> schematics)
     {
@@ -114,39 +116,51 @@ public class Engine
 
         bool IsPartNumber(int i, int j)
         {
-            foreach (Directions direction in Enum.GetValues(typeof(Directions)))
-            {
-                var isPartNumber = direction switch
-                {
-                    Directions.North => CheckIfValid(i - 1, j),
-                    Directions.NorthEast => CheckIfValid(i - 1, j + 1),
-                    Directions.East => CheckIfValid(i, j + 1),
-                    Directions.SouthEast => CheckIfValid(i + 1, j + 1),
-                    Directions.South => CheckIfValid(i + 1, j),
-                    Directions.SouthWest => CheckIfValid(i + 1, j - 1),
-                    Directions.West => CheckIfValid(i, j - 1),
-                    Directions.NorthWest => CheckIfValid(i - 1, j - 1),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-
-                if (isPartNumber)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return CheckSurroundings(CheckIfValid, i, j);
 
             bool CheckIfValid(int tmpI, int tmpJ)
             {
                 if (tmpI < 0 || tmpI >= _schematics.GetLength(0)) return false;
                 if (tmpJ < 0 || tmpJ >= _schematics.GetLength(1)) return false;
                 if (char.IsDigit(_schematics[tmpI, tmpJ])) return false;
-                if (_schematics[tmpI, tmpJ] == '.') return false;
+                switch (_schematics[tmpI, tmpJ])
+                {
+                    case '.':
+                        return false;
+                    case '*':
+                        Gears.Add(new Vector2(tmpI, tmpJ));
+                        break;
+                }
 
                 return true;
             }
         }
+    }
+
+    private bool CheckSurroundings(Func<int, int, bool> validate, int i, int j)
+    {
+        foreach (Directions direction in Enum.GetValues(typeof(Directions)))
+        {
+            var isValid = direction switch
+            {
+                Directions.North => validate(i - 1, j),
+                Directions.NorthEast => validate(i - 1, j + 1),
+                Directions.East => validate(i, j + 1),
+                Directions.SouthEast => validate(i + 1, j + 1),
+                Directions.South => validate(i + 1, j),
+                Directions.SouthWest => validate(i + 1, j - 1),
+                Directions.West => validate(i, j - 1),
+                Directions.NorthWest => validate(i - 1, j - 1),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            if (isValid)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     enum Directions
