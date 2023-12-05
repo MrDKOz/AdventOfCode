@@ -95,12 +95,12 @@ public class Engine
                         if (tmpPartNumberValidated)
                         {
                             ValidPartNumbers.Add(Convert.ToInt32(tmpPartNumber));
-                            //Console.WriteLine($"Added {tmpPartNumber} to ValidPartNumbers.");
+                            //Console.WriteLine($"✅ {tmpPartNumber} [{i},{j}]");
                         }
                         else
                         {
                             InvalidValidPartNumbers.Add(Convert.ToInt32(tmpPartNumber));
-                            //Console.WriteLine($"Added {tmpPartNumber} to InvalidValidPartNumbers.");
+                            //Console.WriteLine($"⛔ {tmpPartNumber} [{i},{j}]");
                         }
                         
                         tmpPartNumber = string.Empty;
@@ -125,7 +125,7 @@ public class Engine
                     Directions.South => CheckIfValid(i + 1, j),
                     Directions.SouthWest => CheckIfValid(i + 1, j - 1),
                     Directions.West => CheckIfValid(i, j - 1),
-                    Directions.NorthWest => CheckIfValid(i + 1, j - 1),
+                    Directions.NorthWest => CheckIfValid(i - 1, j - 1),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
