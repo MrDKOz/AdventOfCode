@@ -15,24 +15,27 @@ public class DayFive
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Two, Part One Answer: ");
+        Console.WriteLine($"Day Two, Part One Answer: {_almanac?.Locations.Min()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: ");
+        Console.WriteLine($"Day Two, Part Two Answer: {_almanac?.PartTwo()}");
     }
 }
 
 public class Almanac
 {
     public List<long> SeedsToPlant { get; set; }
-    public List<TypeMap> TypeMaps = new();
+    public List<Map> Maps = new();
+    public List<long> Locations = new();
+    public List<long> Locations2 = new();
     
     public Almanac(IReadOnlyCollection<string> input)
     {
         ProcessInput();
+        FetchLocations();
         
         return;
 
@@ -54,6 +57,28 @@ public class Almanac
                 {
                     ProcessCategoryData(line, currentMapType);
                 }
+            }
+        }
+
+        void FetchLocations()
+        {
+            foreach (var seed in SeedsToPlant)
+            {
+                var focus = seed;
+
+                foreach (var map in Maps)
+                {
+                    foreach (var mapping in map.Mappings)
+                    {
+                        if (focus >= mapping.SourceRangeStart && focus <= mapping.SourceRangeEnd)
+                        {
+                            focus = mapping.DestinationRangeStart + (focus - mapping.SourceRangeStart);
+                            break;
+                        }
+                    }
+                }
+
+                Locations.Add(focus);
             }
         }
 
@@ -97,17 +122,17 @@ public class Almanac
             void HandleMappings()
             {
                 var currentMapTypeAsString = currentMapType.ToString();
-                var currentMap = TypeMaps.SingleOrDefault(tm => tm.Name == currentMapTypeAsString);
+                var currentMap = Maps.SingleOrDefault(tm => tm.Name == currentMapTypeAsString);
                 
                 if (currentMap == null)
                 {
-                    currentMap = new TypeMap {Name = currentMapTypeAsString};
-                    TypeMaps.Add(currentMap);
+                    currentMap = new Map {Name = currentMapTypeAsString};
+                    Maps.Add(currentMap);
                 }
 
                 var numbers = line.Split(' ');
                 
-                currentMap.Mappings.Add(new TypeMap.Mapping
+                currentMap.Mappings.Add(new Map.Mapping
                 {
                     DestinationRangeStart = long.Parse(numbers[0]),
                     SourceRangeStart = long.Parse(numbers[1]),
@@ -117,7 +142,36 @@ public class Almanac
         }
     }
 
-    public class TypeMap
+    public long PartTwo()
+    {
+        var lowestFound = long.MaxValue;
+        foreach (var seedChunk in SeedsToPlant.Chunk(2).ToArray())
+        {
+            for (var i = seedChunk[0]; i < seedChunk[0] + seedChunk[1]; i++)
+            {
+                var focus = i;
+
+                foreach (var map in Maps)
+                {
+                    foreach (var mapping in map.Mappings)
+                    {
+                        if (focus >= mapping.SourceRangeStart && focus <= mapping.SourceRangeEnd)
+                        {
+                            focus = mapping.DestinationRangeStart + (focus - mapping.SourceRangeStart);
+                            break;
+                        }
+                    }
+                
+                    lowestFound = Math.Min(lowestFound, focus);
+                }
+            }
+        }
+
+        return lowestFound;
+    }
+
+    
+    public class Map
     {
         public string Name { get; set; }
         public List<Mapping> Mappings = new();
@@ -125,36 +179,9 @@ public class Almanac
         public class Mapping
         {
             public long DestinationRangeStart { get; set; }
-
-            public List<long> DestinationRangeNumbers
-            {
-                get
-                {
-                    var numbers = new List<long>();
-                    for (var i = DestinationRangeStart; i <= DestinationRangeEnd; i++)
-                    {
-                        numbers.Add(i);
-                    }
-
-                    return numbers;
-                }
-            }
             public long DestinationRangeEnd => DestinationRangeStart + (RangeLength - 1);
             public long SourceRangeStart { get; set; }
             public long SourceRangeEnd => SourceRangeStart + (RangeLength - 1);
-            public List<long> SourceRangeNumbers
-            {
-                get
-                {
-                    var numbers = new List<long>();
-                    for (var i = SourceRangeStart; i <= SourceRangeEnd; i++)
-                    {
-                        numbers.Add(i);
-                    }
-
-                    return numbers;
-                }
-            }
             public long RangeLength { get; set; }
         }
     }
