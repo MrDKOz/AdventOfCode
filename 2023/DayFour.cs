@@ -5,7 +5,7 @@ namespace AdventOfCode._2023;
 public class DayFour
 {
     private GameCards? _gameCards;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -15,23 +15,25 @@ public class DayFour
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Two, Part One Answer: {_gameCards.Cards.Sum(c => c.Points())}");
+        Console.WriteLine($"Day Two, Part One Answer: {_gameCards?.Cards.Sum(c => c.Points())}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: ");
+        Console.WriteLine($"Day Two, Part Two Answer: {_gameCards?.TotalCards}");
     }
 }
 
 public class GameCards
 {
-    public List<GameCard> Cards { get; set; } = new();
+    public List<GameCard> Cards { get; } = new();
+    public int TotalCards => Cards.Sum(c => c.ProcessedCopies);
 
     public GameCards(List<string> input)
     {
         ProcessInput();
+        ProcessPartTwoRules();
 
         return;
 
@@ -56,6 +58,26 @@ public class GameCards
 
             return splitInput.Select(number => Convert.ToInt32(number)).ToList();
         }
+
+        void ProcessPartTwoRules()
+        {
+            foreach (var card in Cards)
+            {
+                while (card.ProcessedCopies < card.Copies)
+                {
+                    var matchingNumbers = card.MatchingNumberCount();
+                    var cardIdToCopy = card.Id + 1;
+                    for (var i = 0; i < matchingNumbers; i++)
+                    {
+                        var cardToCopy = Cards.Single(c => c.Id == cardIdToCopy);
+                        cardToCopy.Copies++;
+                        cardIdToCopy++;
+                    }
+
+                    card.ProcessedCopies++;
+                }
+            }
+        }
     }
 
     private void AddCard(int id, List<int> winningNumbers, List<int> ourNumbers) =>
@@ -63,7 +85,8 @@ public class GameCards
         {
             Id = id,
             OurNumbers = ourNumbers,
-            WinningNumbers = winningNumbers
+            WinningNumbers = winningNumbers,
+            Copies = 1
         });
 
     public class GameCard
@@ -71,8 +94,10 @@ public class GameCards
         public int Id { get; set; }
         public List<int> OurNumbers { get; set; } = new();
         public List<int> WinningNumbers { get; set; } = new();
-        public List<int> MatchingNumbers() => WinningNumbers.Intersect(OurNumbers).ToList();
+        private List<int> MatchingNumbers() => WinningNumbers.Intersect(OurNumbers).ToList();
         public int MatchingNumberCount() => MatchingNumbers().Count;
+        public int Copies { get; set; }
+        public int ProcessedCopies { get; set; }
 
         public int Points()
         {
