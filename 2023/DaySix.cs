@@ -21,16 +21,17 @@ public class DaySix
     [Test]
     public void PartTwo()
     {
-
+        Console.WriteLine($"Day Six, Part Two Answer: {_races?.WinCountOfFinalRace}");
     }
 }
 
 public class Races
 {
-    private readonly List<Race> RaceList = new();
-    public int TotalWinCount => RaceList
+    private readonly List<Race> _raceList = new();
+    public int TotalWinCount => _raceList
         .Select(r => r.WinningButtonHoldTimesCount)
         .Aggregate(1, (total, next) => total * next);
+    public int WinCountOfFinalRace => _raceList.Last().WinningButtonHoldTimesCount;
 
     public Races(IReadOnlyCollection<string> input)
     {
@@ -50,13 +51,13 @@ public class Races
     }
 
     private void AddRace(string time, string distance) => 
-        RaceList.Add(new Race(float.Parse(time), float.Parse(distance)));
+        _raceList.Add(new Race(float.Parse(time), float.Parse(distance)));
 
     private class Race
     {
         private readonly float _time;
         private readonly float _distance;
-        private List<int> WinningButtonHeldTimes { get; set; } = new();
+        private List<int> WinningButtonHeldTimes { get; } = new();
         public int WinningButtonHoldTimesCount => WinningButtonHeldTimes.Count;
 
         public Race(float time, float distance)
