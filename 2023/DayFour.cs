@@ -15,13 +15,13 @@ public class DayFour
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Two, Part One Answer: {_gameCards?.Cards.Sum(c => c.Points())}");
+        Console.WriteLine($"Day Four, Part One Answer: {_gameCards?.Cards.Sum(c => c.Points())}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: {_gameCards?.TotalCards}");
+        Console.WriteLine($"Day Four, Part Two Answer: {_gameCards?.TotalCards}");
     }
 }
 

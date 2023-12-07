@@ -17,13 +17,13 @@ public class DayThree
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Two, Part One Answer: {_engine?.PartNumbers.SumOfValidPartNumbers}");
+        Console.WriteLine($"Day Three, Part One Answer: {_engine?.PartNumbers.SumOfValidPartNumbers}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: {_engine?.Gears.GearRatioSum}");
+        Console.WriteLine($"Day Three, Part Two Answer: {_engine?.Gears.GearRatioSum}");
     }
 }
 

@@ -15,13 +15,13 @@ public class DayFive
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Two, Part One Answer: {_almanac?.Locations.Min()}");
+        Console.WriteLine($"Day Five, Part One Answer: {_almanac?.Locations.Min()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: {_almanac?.PartTwo()}");
+        Console.WriteLine($"Day Five, Part Two Answer: {_almanac?.PartTwo()}");
     }
 }
 
