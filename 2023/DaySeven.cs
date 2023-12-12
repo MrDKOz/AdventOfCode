@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using AdventOfCode.Helpers;
+﻿using AdventOfCode.Helpers;
 
 namespace AdventOfCode._2023;
 
@@ -51,7 +50,8 @@ public class CamelCards
         
         foreach (var hand in Hands)
         {
-            runningTotal += hand._bid * Hands.IndexOf(hand) + 1;
+            var handValue = hand.Bid * (Hands.IndexOf(hand) + 1);
+            runningTotal += handValue;
         }
 
         return runningTotal;
@@ -61,15 +61,14 @@ public class CamelCards
 
     public class CardsInHand : IComparable<CardsInHand>
     {
-        public readonly Card[] Cards = new Card[5];
-        public readonly int _bid;
-        public Hand CurrentHand = Hand.None;
-        public int HandRank;
-        public record Card(char Name, int Strength);
+        private readonly Card[] _cards = new Card[5];
+        public readonly int Bid;
+        private Hand _hand = Hand.None;
+        private record Card(char Name, int Strength);
 
         public CardsInHand(string cards, int bid)
         {
-            _bid = bid;
+            Bid = bid;
 
             CheckForHandType(cards);
             ProcessCards(cards);
@@ -99,7 +98,7 @@ public class CamelCards
                     _ => throw new Exception($"Invalid card '{card}'")
                 };
                 
-                Cards[currentIndex] = new Card(card, strength);
+                _cards[currentIndex] = new Card(card, strength);
                 currentIndex++;
             }
         }
@@ -114,31 +113,30 @@ public class CamelCards
                 {
                     case 5:
                         // All cards match
-                        CurrentHand = Hand.FiveOfAKind;
+                        _hand = Hand.FiveOfAKind;
                         break;
                     case 4:
                         // All but one card match
-                        CurrentHand = Hand.FourOfAKind;
+                        _hand = Hand.FourOfAKind;
                         break;
                     case 3:
                         // Three cards match, if there is a pair it's a full house
-                        CurrentHand = characterCounts.Count(cc => cc.Value == 2) == 1
+                        _hand = characterCounts.Count(cc => cc.Value == 2) == 1
                             ? Hand.FullHouse
                             : Hand.ThreeOfAKind;
                         break;
                     case 2:
                         // Two cards match, if there is another pair it's two pair
                         var moreThanOnePair = characterCounts.Count(cc => cc.Value == 2) > 1;
-                        CurrentHand = moreThanOnePair ? Hand.TwoPair : Hand.OnePair;
+                        _hand = moreThanOnePair ? Hand.TwoPair : Hand.OnePair;
                         break;
                     default:
                         // All cards are different
-                        CurrentHand = Hand.HighCard;
+                        _hand = Hand.HighCard;
                         break;
                 }
 
-                if (CurrentHand == Hand.None) continue;
-                HandRank = (int)CurrentHand;
+                if (_hand == Hand.None) continue;
                 break;
             }
         }
@@ -166,20 +164,20 @@ public class CamelCards
         public int CompareTo(CardsInHand? other)
         {
             if (other is null) return 1;
-            if (CurrentHand > other.CurrentHand) return 1;
-            if (CurrentHand < other.CurrentHand) return -1;
+            if (_hand > other._hand) return 1;
+            if (_hand < other._hand) return -1;
 
             var index = 0;
-            while (Cards[index] == other.Cards[index] && index < 5)
+            while (_cards[index] == other._cards[index] && index < _cards.Length - 1)
             {
                 index++;
             }
             
-            return Cards[index].Strength.CompareTo(other.Cards[index].Strength);
+            return other._cards[index].Strength.CompareTo(_cards[index].Strength);
         }
     }
 
-    public enum Hand
+    private enum Hand
     {
         FiveOfAKind,
         FourOfAKind,
