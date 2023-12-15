@@ -27,12 +27,12 @@ public class DaySeven
 
 public class CamelCards
 {
-    public List<CardsInHand> Hands = new();
+    private readonly List<CardsInHand> _hands = new();
 
     public CamelCards(IEnumerable<string> input)
     {
         ProcessInput();
-        Hands = Hands.OrderByDescending(hand => hand).ToList();
+        _hands = _hands.OrderByDescending(hand => hand).ToList();
         return;
 
         void ProcessInput()
@@ -44,20 +44,9 @@ public class CamelCards
         }
     }
 
-    public int PartOne()
-    {
-        var runningTotal = 0;
-        
-        foreach (var hand in Hands)
-        {
-            var handValue = hand.Bid * (Hands.IndexOf(hand) + 1);
-            runningTotal += handValue;
-        }
+    public int PartOne() => _hands.Sum(hand => hand.Bid * (_hands.IndexOf(hand) + 1));
 
-        return runningTotal;
-    }
-
-    private void AddHand(string cards, string bid) => Hands.Add(new CardsInHand(cards, Convert.ToInt32(bid)));
+    private void AddHand(string cards, string bid) => _hands.Add(new CardsInHand(cards, Convert.ToInt32(bid)));
 
     public class CardsInHand : IComparable<CardsInHand>
     {
