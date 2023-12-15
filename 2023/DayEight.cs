@@ -86,9 +86,9 @@ public class Map
             };
     }
 
-    public int PartOne()
+    public long PartOne()
     {
-        var stepCount = 0;
+        long stepCount = 0;
         var currentValue = _startingLabel;
         var target = new HashSet<string> { "ZZZ" };
 
