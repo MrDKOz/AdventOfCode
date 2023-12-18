@@ -21,7 +21,7 @@ public class DayEight
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Eight, Part Two Answer:");
+        Console.WriteLine($"Day Eight, Part Two Answer: {_map?.PartTwo()}");
     }
 }
 
@@ -49,15 +49,51 @@ public class Map
 
         do
         {
-            var tempInstructionIndex = stepCount % _instructions.Length;
-
-            currentValue = _instructions[tempInstructionIndex] == 0
-                ? _nodes[currentValue].left
-                : _nodes[currentValue].right;
+            currentValue = FetchValue(stepCount, currentValue);
 
             stepCount++;
         } while (currentValue != end);
 
         return stepCount;
+    }
+
+    public long PartTwo()
+    {
+        var stepCounts = new List<long>();
+
+        foreach (var node in _nodes.Keys.Where(k => k.EndsWith('A')))
+        {
+            long stepCount = 0;
+            var currentValue = node;
+
+            do
+            {
+                currentValue = FetchValue(stepCount, currentValue);
+
+                stepCount++;
+            } while (!currentValue.EndsWith('Z'));
+
+            stepCounts.Add(stepCount);
+        }
+
+        return stepCounts.Aggregate(1L, FindLcm);
+
+        long FindLcm(long a, long b) => a * b / FindGcd(a, b);
+
+        static long FindGcd(long a, long b)
+        {
+            if (a == 0 || b == 0) return Math.Max(a, b);
+            return a % b == 0 ? b : FindGcd(b, a % b);
+        }
+    }
+    
+    private string FetchValue(long stepCount, string currentValue)
+    {
+        var tempInstructionIndex = stepCount % _instructions.Length;
+
+        currentValue = _instructions[tempInstructionIndex] == 0
+            ? _nodes[currentValue].left
+            : _nodes[currentValue].right;
+        return currentValue;
     }
 }
