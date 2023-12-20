@@ -1,31 +1,37 @@
 namespace AdventOfCode._2022;
 
-public class Expedition
-{
-    public List<Elf> Elves { get; } = new();
-}
-
-public class Elf
-{
-    public void AddItem(string calories) => Calories.Add(Convert.ToInt32(calories));
-    public List<int> Calories { get; } = new();
-    public int SumOfCalories => Calories.Sum();
-}
-
 /// <summary>
 /// Puzzle link: https://adventofcode.com/2022/day/1
 /// </summary>
-public class DayOne
+public class DayOne : ExerciseBase
 {
-    private Expedition? _expedition;
+    private readonly Expedition _expedition;
 
-    [SetUp]
-    public void Setup()
+    public DayOne() : base(2022, 1)
     {
-        _expedition = BuildExpedition(PuzzleInput.Load(2022, 1));
+        _expedition = BuildExpedition(Input);
     }
 
-    private static Expedition BuildExpedition(List<string> input)
+    [Test]
+    public override void PartOne()
+    {
+        var sum = _expedition.Elves.Max(e => e.SumOfCalories);
+
+        Console.WriteLine($"Answer: {sum}");
+    }
+
+    [Test]
+    public override void PartTwo()
+    {
+        var sum = _expedition.Elves
+            .OrderByDescending(e => e.SumOfCalories)
+            .Take(3)
+            .Sum(e => e.SumOfCalories);
+
+        Console.WriteLine($"Answer: {sum}");
+    }
+
+    private static Expedition BuildExpedition(IEnumerable<string> input)
     {
         var expedition = new Expedition();
         var tempElf = new Elf();
@@ -51,22 +57,15 @@ public class DayOne
         return expedition;
     }
 
-    [Test]
-    public void PartOne()
+    private class Expedition
     {
-        var sum = _expedition!.Elves.Max(e => e.SumOfCalories);
-
-        Console.WriteLine($"Answer: {sum}");
+        public List<Elf> Elves { get; } = new();
     }
 
-    [Test]
-    public void PartTwo()
+    private class Elf
     {
-        var sum = _expedition!.Elves
-            .OrderByDescending(e => e.SumOfCalories)
-            .Take(3)
-            .Sum(e => e.SumOfCalories);
-
-        Console.WriteLine($"Answer: {sum}");
+        public void AddItem(string calories) => Calories.Add(Convert.ToInt32(calories));
+        public List<int> Calories { get; } = new();
+        public int SumOfCalories => Calories.Sum();
     }
 }

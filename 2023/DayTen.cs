@@ -1,17 +1,22 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DayTen
+public class DayTen : ExerciseBase
 {
-    private PipeNetwork _pipeNetwork = new(PuzzleInput.Load(2023, 10));
+    private PipeNetwork _pipeNetwork;
+
+    public DayTen() : base(2023, 10)
+    {
+        _pipeNetwork = new(Input);
+    }
 
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Ten, Part One Answer:");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Ten, Part Two Answer:");
     }

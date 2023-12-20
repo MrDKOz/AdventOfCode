@@ -3,18 +3,23 @@ using System.Text;
 
 namespace AdventOfCode._2023;
 
-public class DayThree
+public class DayThree : ExerciseBase
 {
-    private readonly Engine _engine = new(PuzzleInput.Load(2023, 3));
+    private readonly Engine _engine;
 
+    public DayThree() : base(2023, 3)
+    {
+        _engine = new Engine(Input);
+    }
+    
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Three, Part One Answer: {_engine.PartNumbers.SumOfValidPartNumbers}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Three, Part Two Answer: {_engine.Gears.GearRatioSum}");
     }

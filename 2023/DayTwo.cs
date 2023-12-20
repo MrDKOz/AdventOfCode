@@ -1,11 +1,16 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DayTwo
+public class DayTwo : ExerciseBase
 {
-    private readonly Games _games = new(PuzzleInput.Load(2023, 2));
+    private readonly Games _games;
 
+    public DayTwo() : base(2023, 2)
+    {
+        _games = new Games(Input);
+    }
+    
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         var toCheck = new PossibilityToCheck(12, 13, 14);
         var possibleGames = _games.GetPossibleGames(toCheck);
@@ -14,7 +19,7 @@ public class DayTwo
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Two, Part Two Answer: {_games.AllGamesPower}");
     }
@@ -26,14 +31,14 @@ public class DayTwo
         private List<Game> GamesList { get; }
         public int AllGamesPower => GamesList.Sum(g => g.GamePower);
 
-        public Games(List<string> input)
+        public Games(IReadOnlyList<string> input)
         {
             GamesList = new List<Game>();
 
             ProcessInput(input);
         }
 
-        private void ProcessInput(List<string> input)
+        private void ProcessInput(IReadOnlyList<string> input)
         {
             foreach (var game in input)
             {
@@ -119,7 +124,7 @@ public class DayTwo
         }
     }
 
-    public class Game
+    private class Game
     {
         public int Id { get; init; }
         public List<Handful> Handfuls { get; init; } = null!;
@@ -129,7 +134,7 @@ public class DayTwo
         public int GamePower => HighestRedCount * HighestGreenCount * HighestBlueCount;
     }
 
-    public class Handful
+    private class Handful
     {
         public int RedCount { get; set; }
         public int BlueCount { get; set; }
