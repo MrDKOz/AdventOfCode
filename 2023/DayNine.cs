@@ -38,9 +38,9 @@ public class DayNine
             }
         }
 
-        public int PartOne()
+        public long PartOne()
         {
-            var result = 0;
+            long result = 0;
 
             foreach (var reading in _readings)
             {
@@ -62,14 +62,14 @@ public class DayNine
                     : CalculateDifferences(sequences.Last()));
 
                 firstSequence = false;
-            } while (sequences.Last().Sum() > 0);
+            } while (sequences.Last().Any(i => i != 0));
 
             return sequences;
         }
 
-        private static int CalculateNextValue(IReadOnlyList<int[]> sequences)
+        private static long CalculateNextValue(IReadOnlyList<int[]> sequences)
         {
-            var returnValue = 0;
+            long returnValue = 0;
 
             for (var i = sequences.Count - 1; i >= 0; i--)
             {
