@@ -15,13 +15,13 @@ public class DayNine
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Eight, Part One Answer: {_oasis.PartOne()}");
+        Console.WriteLine($"Day Eight, Part One Answer: {_oasis.Task()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Eight, Part Two Answer: ");
+        Console.WriteLine($"Day Eight, Part Two Answer: {_oasis.Task(false)}");
     }
 
     private class Oasis
@@ -38,18 +38,10 @@ public class DayNine
             }
         }
 
-        public long PartOne()
-        {
-            long result = 0;
-
-            foreach (var reading in _readings)
-            {
-                var sequences = GenerateSequences(reading);
-                result += CalculateNextValue(sequences);
-            }
-
-            return result;
-        }
+        public long Task(bool partOne = true) =>
+            _readings.Select(GenerateSequences)
+                .Select(sequences => CalculateUnknownValue(sequences, partOne))
+                .Sum();
 
         private static IReadOnlyList<int[]> GenerateSequences(IReadOnlyList<int> reading)
         {
@@ -67,7 +59,7 @@ public class DayNine
             return sequences;
         }
 
-        private static long CalculateNextValue(IReadOnlyList<int[]> sequences)
+        private static long CalculateUnknownValue(IReadOnlyList<int[]> sequences, bool partOne = true)
         {
             long returnValue = 0;
 
@@ -75,7 +67,9 @@ public class DayNine
             {
                 returnValue = i == sequences.Count - 1
                     ? 0
-                    : sequences[i].Last() + returnValue;
+                    : partOne
+                        ? sequences[i].Last() + returnValue
+                        : sequences[i].First() - returnValue;
             }
 
             return returnValue;
