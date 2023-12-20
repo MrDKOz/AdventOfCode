@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using AdventOfCode.Helpers;
+﻿using AdventOfCode.Helpers;
 
 namespace AdventOfCode._2023;
 
 public class DayNine
 {
-    private Oasis oasis = new(PuzzleInput.Load(2023, 9));
+    private readonly Oasis _oasis = new(PuzzleInput.Load(2023, 9));
     
     [SetUp]
     public void Setup()
@@ -16,7 +15,7 @@ public class DayNine
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Eight, Part One Answer: {oasis.PartOne()}");
+        Console.WriteLine($"Day Eight, Part One Answer: {_oasis.PartOne()}");
     }
 
     [Test]
@@ -41,18 +40,20 @@ public class DayNine
 
         public int PartOne()
         {
+            var result = 0;
+
             foreach (var reading in _readings)
             {
                 var sequences = GenerateSequences(reading);
-                var nextValue = CalculateNextValue(sequences);
+                result += CalculateNextValue(sequences);
             }
 
-            return 0;
+            return result;
         }
 
         private static IReadOnlyList<int[]> GenerateSequences(IReadOnlyList<int> reading)
         {
-            var sequences = new List<int[]>();
+            var sequences = new List<int[]> { reading.ToArray() };
             var firstSequence = true;
             do
             {
@@ -68,14 +69,17 @@ public class DayNine
 
         private static int CalculateNextValue(IReadOnlyList<int[]> sequences)
         {
+            var returnValue = 0;
+
             for (var i = sequences.Count - 1; i >= 0; i--)
             {
-                Console.WriteLine(sequences[i].Sum());
+                returnValue = i == sequences.Count - 1
+                    ? 0
+                    : sequences[i].Last() + returnValue;
             }
 
-            return 0;
+            return returnValue;
         }
-
 
         private static int[] CalculateDifferences(IReadOnlyList<int> input)
         {
