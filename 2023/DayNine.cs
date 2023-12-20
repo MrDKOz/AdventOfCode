@@ -5,23 +5,17 @@ namespace AdventOfCode._2023;
 public class DayNine
 {
     private readonly Oasis _oasis = new(PuzzleInput.Load(2023, 9));
-    
-    [SetUp]
-    public void Setup()
-    {
-
-    }
 
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Eight, Part One Answer: {_oasis.Task()}");
+        Console.WriteLine($"Day Nine, Part One Answer: {_oasis.Task()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Eight, Part Two Answer: {_oasis.Task(false)}");
+        Console.WriteLine($"Day Nine, Part Two Answer: {_oasis.Task(false)}");
     }
 
     private class Oasis
