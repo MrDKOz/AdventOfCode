@@ -1,6 +1,4 @@
-﻿using AdventOfCode.Helpers;
-
-namespace AdventOfCode._2022;
+﻿namespace AdventOfCode._2022;
 
 public class DaySix
 {

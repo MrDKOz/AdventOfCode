@@ -1,30 +1,23 @@
 ﻿using System.Text.RegularExpressions;
-using AdventOfCode.Helpers;
 
 namespace AdventOfCode._2023;
 
 public class DayOne
 {
-    private CalibrationValues? _calibrationValues;
+    private readonly CalibrationValues _calibrationValues = new(PuzzleInput.Load(2023, 1));
 
-    [SetUp]
-    public void Setup()
-    {
-        _calibrationValues = new CalibrationValues(PuzzleInput.Load(2023, 1));
-    }
-    
     [Test]
     public void PartOne()
     {
-        _calibrationValues?.Process();
-        Console.WriteLine($"Day One, Part One Answer: {_calibrationValues!.FirstAndLastDigits.Sum()}");
+        _calibrationValues.Process();
+        Console.WriteLine($"Day One, Part One Answer: {_calibrationValues.FirstAndLastDigits.Sum()}");
     }
 
     [Test]
     public void PartTwo()
     {
-        _calibrationValues?.Process(true);
-        Console.WriteLine($"Day One, Part Two Answer: {_calibrationValues!.FirstAndLastDigits.Sum()}");
+        _calibrationValues.Process(true);
+        Console.WriteLine($"Day One, Part Two Answer: {_calibrationValues.FirstAndLastDigits.Sum()}");
     }
 }
 
@@ -56,7 +49,7 @@ internal partial class CalibrationValues
         {
             var firstDigit = FindFirstDigit(line);
             var lastDigit = FindLastDigit(line);
-            
+
             FirstAndLastDigits.Add(Convert.ToInt32($"{firstDigit}{lastDigit}"));
         }
     }
@@ -71,16 +64,16 @@ internal partial class CalibrationValues
 
             var a = GetValue(matches.First());
             var b = GetValue(matches.Last());
-            
+
             FirstAndLastDigits.Add(int.Parse($"{a}{b}"));
         }
     }
-    
+
     private int? GetValue(Match match)
     {
         var value = GetMatchedValue(match);
 
-        if(StringToInt.ContainsKey(value))
+        if (StringToInt.ContainsKey(value))
         {
             StringToInt.TryGetValue(value, out var convertedValue);
             return convertedValue;
@@ -89,7 +82,7 @@ internal partial class CalibrationValues
         _ = int.TryParse(value, out var result);
         return result;
     }
-    
+
     private string GetMatchedValue(Match match)
     {
         if (!string.IsNullOrEmpty(match.Value))
@@ -129,6 +122,7 @@ internal partial class CalibrationValues
 
     private static string FindLastDigit(string input) => FindFirstDigit(new string(input.Reverse().ToArray()));
 
-    [GeneratedRegex("(?<=(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)|(\\d{1}))", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    [GeneratedRegex("(?<=(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)|(\\d{1}))",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
     private static partial Regex FindNumbersAsWords();
 }

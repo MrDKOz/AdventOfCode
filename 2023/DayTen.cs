@@ -1,7 +1,4 @@
-﻿using System.Numerics;
-using AdventOfCode.Helpers;
-
-namespace AdventOfCode._2023;
+﻿namespace AdventOfCode._2023;
 
 public class DayTen
 {

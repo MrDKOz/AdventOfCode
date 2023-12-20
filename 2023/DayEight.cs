@@ -1,27 +1,19 @@
-﻿using AdventOfCode.Helpers;
-
-namespace AdventOfCode._2023;
+﻿namespace AdventOfCode._2023;
 
 public class DayEight
 {
-    private Map? _map;
-
-    [SetUp]
-    public void Setup()
-    {
-        _map = new Map(PuzzleInput.Load(2023, 8));
-    }
+    private readonly Map _map = new(PuzzleInput.Load(2023, 8));
 
     [Test]
     public void PartOne()
     {
-        Console.WriteLine($"Day Eight, Part One Answer: {_map?.PartOne("AAA", "ZZZ")}");
+        Console.WriteLine($"Day Eight, Part One Answer: {_map.PartOne("AAA", "ZZZ")}");
     }
 
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Eight, Part Two Answer: {_map?.PartTwo()}");
+        Console.WriteLine($"Day Eight, Part Two Answer: {_map.PartTwo()}");
     }
 }
 
@@ -65,6 +57,7 @@ public class Map
         {
             long stepCount = 0;
             var currentValue = node;
+            long instructionIndex = 0;
 
             do
             {
@@ -86,7 +79,7 @@ public class Map
             return a % b == 0 ? b : FindGcd(b, a % b);
         }
     }
-    
+
     private string FetchValue(long stepCount, string currentValue)
     {
         var tempInstructionIndex = stepCount % _instructions.Length;

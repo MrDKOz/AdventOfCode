@@ -1,5 +1,3 @@
-using AdventOfCode.Helpers;
-
 namespace AdventOfCode._2022;
 
 public class Expedition

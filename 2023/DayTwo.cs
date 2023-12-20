@@ -1,145 +1,138 @@
-﻿using AdventOfCode.Helpers;
-
-namespace AdventOfCode._2023;
+﻿namespace AdventOfCode._2023;
 
 public class DayTwo
 {
-    private Games? _games;
-    
-    [SetUp]
-    public void Setup()
-    {
-        _games = new Games(PuzzleInput.Load(2023, 2));
-    }
-    
+    private readonly Games _games = new(PuzzleInput.Load(2023, 2));
+
     [Test]
     public void PartOne()
     {
         var toCheck = new PossibilityToCheck(12, 13, 14);
-        var possibleGames = _games?.GetPossibleGames(toCheck);
-        
-        Console.WriteLine($"Day Two, Part One Answer: {possibleGames!.Sum(g => g.Id)}");
+        var possibleGames = _games.GetPossibleGames(toCheck);
+
+        Console.WriteLine($"Day Two, Part One Answer: {possibleGames.Sum(g => g.Id)}");
     }
-    
+
     [Test]
     public void PartTwo()
     {
-        Console.WriteLine($"Day Two, Part Two Answer: {_games?.AllGamesPower}");
-    }
-}
-
-public record PossibilityToCheck(int RedCount, int GreenCount, int BlueCount);
-
-public class Games
-{
-    private List<Game> GamesList { get; }
-    public int AllGamesPower => GamesList.Sum(g => g.GamePower);
-
-    public Games(List<string> input)
-    {
-        GamesList = new List<Game>();
-
-        ProcessInput(input);
+        Console.WriteLine($"Day Two, Part Two Answer: {_games.AllGamesPower}");
     }
 
-    private void ProcessInput(List<string> input)
+    private record PossibilityToCheck(int RedCount, int GreenCount, int BlueCount);
+
+    private class Games
     {
-        foreach (var game in input)
+        private List<Game> GamesList { get; }
+        public int AllGamesPower => GamesList.Sum(g => g.GamePower);
+
+        public Games(List<string> input)
         {
-            var newGame = new Game
-            {
-                Id = FetchGameId(game),
-                Handfuls = FetchHandfuls(game)
-            };
-            
-            GamesList.Add(newGame);
+            GamesList = new List<Game>();
+
+            ProcessInput(input);
         }
 
-        return;
-
-        // Fetch the ID of the game
-        int FetchGameId(string game) => Convert.ToInt32(game.Split(':').First().Replace("Game", string.Empty).Trim());
-
-        List<Handful> FetchHandfuls(string game)
+        private void ProcessInput(List<string> input)
         {
-            var result = new List<Handful>();
-            var sets = game.Split(':').Last();
-            var setsList = sets.Split(';').ToList();
-
-            foreach (var set in setsList)
+            foreach (var game in input)
             {
-                var tmpHandful = new Handful();
-                
-                foreach (var colorAndCount in set.Split(','))
+                var newGame = new Game
                 {
-                    var colorAndCountSplit = colorAndCount.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    var color = colorAndCountSplit.Last();
-                    var count = Convert.ToInt32(colorAndCountSplit.First());
+                    Id = FetchGameId(game),
+                    Handfuls = FetchHandfuls(game)
+                };
 
-                    switch (color)
+                GamesList.Add(newGame);
+            }
+
+            return;
+
+            // Fetch the ID of the game
+            int FetchGameId(string game) =>
+                Convert.ToInt32(game.Split(':').First().Replace("Game", string.Empty).Trim());
+
+            List<Handful> FetchHandfuls(string game)
+            {
+                var result = new List<Handful>();
+                var sets = game.Split(':').Last();
+                var setsList = sets.Split(';').ToList();
+
+                foreach (var set in setsList)
+                {
+                    var tmpHandful = new Handful();
+
+                    foreach (var colorAndCount in set.Split(','))
                     {
-                        case "red":
-                            tmpHandful.RedCount += count;
-                            break;
-                        case "green":
-                            tmpHandful.GreenCount += count;
-                            break;
-                        case "blue":
-                            tmpHandful.BlueCount += count;
-                            break;
-                        default:
-                            throw new Exception($"Unknown color '{color}'");
+                        var colorAndCountSplit = colorAndCount.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        var color = colorAndCountSplit.Last();
+                        var count = Convert.ToInt32(colorAndCountSplit.First());
+
+                        switch (color)
+                        {
+                            case "red":
+                                tmpHandful.RedCount += count;
+                                break;
+                            case "green":
+                                tmpHandful.GreenCount += count;
+                                break;
+                            case "blue":
+                                tmpHandful.BlueCount += count;
+                                break;
+                            default:
+                                throw new Exception($"Unknown color '{color}'");
+                        }
                     }
+
+                    result.Add(tmpHandful);
                 }
-                
-                result.Add(tmpHandful);
+
+                return result;
+            }
+        }
+
+        public IEnumerable<Game> GetPossibleGames(PossibilityToCheck possibilityToCheck)
+        {
+            var result = new List<Game>();
+
+            foreach (var game in GamesList)
+            {
+                var gamePossible = true;
+
+                foreach (var handful in game.Handfuls)
+                {
+                    if (handful.RedCount <= possibilityToCheck.RedCount &&
+                        handful.GreenCount <= possibilityToCheck.GreenCount &&
+                        handful.BlueCount <= possibilityToCheck.BlueCount) continue;
+
+                    gamePossible = false;
+                    break;
+                }
+
+                if (gamePossible)
+                {
+                    result.Add(game);
+                }
             }
 
             return result;
         }
     }
-    
-    public IEnumerable<Game> GetPossibleGames(PossibilityToCheck possibilityToCheck)
+
+    public class Game
     {
-        var result = new List<Game>();
-
-        foreach (var game in GamesList)
-        {
-            var gamePossible = true;
-
-            foreach (var handful in game.Handfuls)
-            {
-                if (handful.RedCount <= possibilityToCheck.RedCount &&
-                    handful.GreenCount <= possibilityToCheck.GreenCount &&
-                    handful.BlueCount <= possibilityToCheck.BlueCount) continue;
-
-                gamePossible = false;
-                break;
-            }
-
-            if (gamePossible)
-            {
-                result.Add(game);
-            }
-        }
-
-        return result;
+        public int Id { get; init; }
+        public List<Handful> Handfuls { get; init; } = null!;
+        private int HighestRedCount => Handfuls.Max(h => h.RedCount);
+        private int HighestGreenCount => Handfuls.Max(h => h.GreenCount);
+        private int HighestBlueCount => Handfuls.Max(h => h.BlueCount);
+        public int GamePower => HighestRedCount * HighestGreenCount * HighestBlueCount;
     }
-}
 
-public class Game
-{
-    public int Id { get; set; }
-    public List<Handful> Handfuls { get; set; }
-    public int HighestRedCount => Handfuls.Max(h => h.RedCount);
-    public int HighestGreenCount => Handfuls.Max(h => h.GreenCount);
-    public int HighestBlueCount => Handfuls.Max(h => h.BlueCount);
-    public int GamePower => HighestRedCount * HighestGreenCount * HighestBlueCount;
-}
-
-public class Handful
-{
-    public int RedCount { get; set; }
-    public int BlueCount { get; set; }
-    public int GreenCount { get; set; }
+    public class Handful
+    {
+        public int RedCount { get; set; }
+        public int BlueCount { get; set; }
+        public int GreenCount { get; set; }
+    }
 }
