@@ -23,31 +23,31 @@
     <ItemGroup>
       <None Remove="2022\Files\day1.txt" />
       <Content Include="2022\Files\day1.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day2.txt" />
       <Content Include="2022\Files\day2.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day3.txt" />
       <Content Include="2022\Files\day3.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day4.txt" />
       <Content Include="2022\Files\day4.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day5.txt" />
       <Content Include="2022\Files\day5.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day6.txt" />
       <Content Include="2022\Files\day6.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day7.txt" />
       <Content Include="2022\Files\day7.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day8.txt" />
       <None Update="2023\Files\day1.txt">
