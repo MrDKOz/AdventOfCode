@@ -1,9 +1,14 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DaySix
+public class DaySix : ExerciseBase
 {
     private Races? _races;
-    
+
+    public DaySix() : base(2023, 6)
+    {
+        _races = new(Input);
+    }
+
     [SetUp]
     public void Setup()
     {
@@ -11,75 +16,77 @@ public class DaySix
     }
 
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Six, Part One Answer: {_races?.TotalWinCount}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Six, Part Two Answer: {_races?.WinCountOfFinalRace}");
     }
-}
 
-public class Races
-{
-    private readonly List<Race> _raceList = new();
-    public int TotalWinCount => _raceList
-        .Select(r => r.WinningButtonHoldTimesCount)
-        .Aggregate(1, (total, next) => total * next);
-    public int WinCountOfFinalRace => _raceList.Last().WinningButtonHoldTimesCount;
-
-    public Races(IReadOnlyCollection<string> input)
+    private class Races
     {
-        ProcessInput();
-        return;
+        private readonly List<Race> _raceList = new();
 
-        void ProcessInput()
+        public int TotalWinCount => _raceList
+            .Select(r => r.WinningButtonHoldTimesCount)
+            .Aggregate(1, (total, next) => total * next);
+
+        public int WinCountOfFinalRace => _raceList.Last().WinningButtonHoldTimesCount;
+
+        public Races(IReadOnlyCollection<string> input)
         {
-            var times = input.First().Split(':').Last().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var distances = input.Last().Split(':').Last().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            ProcessInput();
+            return;
 
-            for (var i = 0; i < times.Length; i++)
+            void ProcessInput()
             {
-                AddRace(times[i], distances[i]);
+                var times = input.First().Split(':').Last().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var distances = input.Last().Split(':').Last().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                for (var i = 0; i < times.Length; i++)
+                {
+                    AddRace(times[i], distances[i]);
+                }
             }
         }
-    }
 
-    private void AddRace(string time, string distance) => 
-        _raceList.Add(new Race(float.Parse(time), float.Parse(distance)));
+        private void AddRace(string time, string distance) =>
+            _raceList.Add(new Race(float.Parse(time), float.Parse(distance)));
 
-    private class Race
-    {
-        private readonly float _time;
-        private readonly float _distance;
-        private List<int> WinningButtonHeldTimes { get; } = new();
-        public int WinningButtonHoldTimesCount => WinningButtonHeldTimes.Count;
-
-        public Race(float time, float distance)
+        private class Race
         {
-            _time = time;
-            _distance = distance;
+            private readonly float _time;
+            private readonly float _distance;
+            private List<int> WinningButtonHeldTimes { get; } = new();
+            public int WinningButtonHoldTimesCount => WinningButtonHeldTimes.Count;
 
-            CalculatePossibleButtonHoldTimes();
-        }
-
-        private void CalculatePossibleButtonHoldTimes()
-        {
-            var buttonHoldTime = 0;
-
-            for (var i = 0; i < _time; i++)
+            public Race(float time, float distance)
             {
-                var distance = buttonHoldTime * (_time - i);
+                _time = time;
+                _distance = distance;
 
-                if (distance > _distance)
+                CalculatePossibleButtonHoldTimes();
+            }
+
+            private void CalculatePossibleButtonHoldTimes()
+            {
+                var buttonHoldTime = 0;
+
+                for (var i = 0; i < _time; i++)
                 {
-                    WinningButtonHeldTimes.Add(buttonHoldTime);
-                }
+                    var distance = buttonHoldTime * (_time - i);
 
-                buttonHoldTime++;
+                    if (distance > _distance)
+                    {
+                        WinningButtonHeldTimes.Add(buttonHoldTime);
+                    }
+
+                    buttonHoldTime++;
+                }
             }
         }
     }

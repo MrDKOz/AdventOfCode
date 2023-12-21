@@ -50,9 +50,6 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <None Remove="2022\Files\day8.txt" />
-      <Content Include="2022\Files\day8.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Update="2023\Files\day1.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

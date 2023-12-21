@@ -1,17 +1,22 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DayNine
+public class DayNine : ExerciseBase
 {
-    private readonly Oasis _oasis = new(PuzzleInput.Load(2023, 9));
+    private readonly Oasis _oasis;
 
+    public DayNine() : base(2023, 9)
+    {
+        _oasis = new Oasis(Input);
+    }
+    
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Nine, Part One Answer: {_oasis.Task()}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Nine, Part Two Answer: {_oasis.Task(false)}");
     }

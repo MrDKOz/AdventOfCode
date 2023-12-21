@@ -1,14 +1,19 @@
 ﻿namespace AdventOfCode._2022;
 
-public class DaySix
+public class DaySix : ExerciseBase
 {
-    private readonly List<string> _puzzleInput = PuzzleInput.Load(2022, 6);
+    private readonly IReadOnlyList<string> _puzzleInput;
+
+    public DaySix() : base(2022, 6)
+    {
+        _puzzleInput = Input;
+    }
+    
+    [Test]
+    public override void PartOne() => Console.WriteLine($"Answer: {GetAnswer(4)}");
 
     [Test]
-    public void PartOne() => Console.WriteLine($"Answer: {GetAnswer(4)}");
-
-    [Test]
-    public void PartTwo() => Console.WriteLine($"Answer: {GetAnswer(14)}");
+    public override void PartTwo() => Console.WriteLine($"Answer: {GetAnswer(14)}");
 
     private int GetAnswer(int lastCount)
     {

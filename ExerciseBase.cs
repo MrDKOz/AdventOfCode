@@ -8,7 +8,7 @@ public abstract class ExerciseBase
     {
         Input = PuzzleInput.Load(year, day);
     }
-    
+
     [Test]
     public abstract void PartOne();
 

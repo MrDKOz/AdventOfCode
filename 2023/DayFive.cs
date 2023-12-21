@@ -1,17 +1,22 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DayFive
+public class DayFive : ExerciseBase
 {
-    private readonly Almanac _almanac = new(PuzzleInput.Load(2023, 5));
+    private readonly Almanac _almanac;
 
+    public DayFive() : base(2023, 5)
+    {
+        _almanac = new Almanac(Input);
+    }
+    
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Five, Part One Answer: {_almanac.Locations.Min()}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Five, Part Two Answer: {_almanac.PartTwo()}");
     }

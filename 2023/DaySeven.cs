@@ -1,8 +1,13 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DaySeven
+public class DaySeven :ExerciseBase
 {
     private CamelCards? _camelCards;
+    
+    public DaySeven() : base(2023, 7)
+    {
+        _camelCards = new(Input);
+    }
     
     [SetUp]
     public void Setup()
@@ -11,13 +16,13 @@ public class DaySeven
     }
 
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Seven, Part One Answer: {_camelCards?.PartOne()}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Seven, Part Two Answer:");
     }

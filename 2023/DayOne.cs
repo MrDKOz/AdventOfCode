@@ -25,7 +25,7 @@ public class DayOne : ExerciseBase
         Console.WriteLine($"Day One, Part Two Answer: {_calibrationValues.FirstAndLastDigits.Sum()}");
     }
 
-    private partial class CalibrationValues
+    private class CalibrationValues
     {
         private readonly IReadOnlyList<string> _input;
         public readonly List<int> FirstAndLastDigits = new();
@@ -60,7 +60,7 @@ public class DayOne : ExerciseBase
 
         private void ExtractFirstAndLastDigitsV2()
         {
-            var regex = FindNumbersAsWords();
+            var regex = new Regex("(?<=(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)|(\\d{1}))");
 
             foreach (var line in _input)
             {
@@ -125,9 +125,5 @@ public class DayOne : ExerciseBase
         }
 
         private static string FindLastDigit(string input) => FindFirstDigit(new string(input.Reverse().ToArray()));
-
-        [GeneratedRegex("(?<=(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)|(\\d{1}))",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
-        private static partial Regex FindNumbersAsWords();
     }
 }

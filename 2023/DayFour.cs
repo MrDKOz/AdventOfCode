@@ -1,17 +1,22 @@
 ﻿namespace AdventOfCode._2023;
 
-public class DayFour
+public class DayFour : ExerciseBase
 {
-    private readonly GameCards _gameCards = new(PuzzleInput.Load(2023, 4));
+    private readonly GameCards _gameCards;
 
+    public DayFour() : base(2023, 4)
+    {
+        _gameCards = new(Input);
+    }
+    
     [Test]
-    public void PartOne()
+    public override void PartOne()
     {
         Console.WriteLine($"Day Four, Part One Answer: {_gameCards.Cards.Sum(c => c.Points())}");
     }
 
     [Test]
-    public void PartTwo()
+    public override void PartTwo()
     {
         Console.WriteLine($"Day Four, Part Two Answer: {_gameCards.TotalCards}");
     }
@@ -21,7 +26,7 @@ public class DayFour
         public List<GameCard> Cards { get; } = new();
         public int TotalCards => Cards.Sum(c => c.ProcessedCopies);
 
-        public GameCards(List<string> input)
+        public GameCards(IEnumerable<string> input)
         {
             ProcessInput();
             ProcessPartTwoRules();
