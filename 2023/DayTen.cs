@@ -24,6 +24,7 @@ public class DayTen : ExerciseBase
     private class PipeNetwork
     {
         private Pipe[,] _pipes = null!;
+        private (int y, int x) _startingLocation;
         
         public PipeNetwork(IReadOnlyList<string> input)
         {
@@ -38,7 +39,54 @@ public class DayTen : ExerciseBase
             {
                 for (var x = 0; x < input[y].Length; x++)
                 {
-                    _pipes[y, x] = new Pipe(input[y][x]);
+                    var inputChar = input[y][x];
+
+                    if (inputChar == 'S') _startingLocation = (y, x);
+
+                    _pipes[y, x] = new Pipe(inputChar);
+                }
+            }
+        }
+
+        private void GeneratePath()
+        {
+            var found = new Stack<(int y, int x)>();
+
+            foreach (var direction in Enum.GetValues(typeof(Directions)))
+            {
+                //var currentPipe = _pipes
+            }
+
+            return;
+
+            List<Directions> FindValidDirectionsFromPoint(int y, int x)
+            {
+                foreach (var VARIABLE in GetValidSurroundingPipes(y, x))
+                {
+                    
+                }
+
+            }
+        }
+
+        private Pipe GetPipeAtDirection(Directions direction, int y, int x) =>
+            direction switch
+            {
+                Directions.North => _pipes[y - 1, x],
+                Directions.East => _pipes[y, x + 1],
+                Directions.South => _pipes[y + 1, x],
+                Directions.West => _pipes[y, x - 1],
+                _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+            };
+        
+        private IEnumerable<Pipe> GetValidSurroundingPipes(int y, int x)
+        {
+            foreach (var direction in _pipes[y, x].Connections)
+            {
+                var pipeToCheck = GetPipeAtDirection(direction, y, x);
+                if (pipeToCheck.AcceptsConnectionFrom(direction))
+                {
+                    yield return pipeToCheck;
                 }
             }
         }
@@ -46,48 +94,44 @@ public class DayTen : ExerciseBase
         private class Pipe
         {
             public string Description;
-            public PipeConnections Connections;
+            public List<Directions> Connections;
 
             public Pipe(char character)
             {
                 (Description, Connections) = CharToPipe(character);
             }
 
-            private (string Description, PipeConnections Connections) CharToPipe(char character) =>
+            private (string description, List<Directions> directions) CharToPipe(char character) =>
                 character switch
-                {                                                 // North  East   South  West
-                    '|' => ("North <-> South",   new PipeConnections(true,  false, true,  false)),
-                    '-' => ("East <-> West",     new PipeConnections(false, true,  false, true)),
-                    'L' => ("North <-> East",    new PipeConnections(true,  true,  false, false)),
-                    'J' => ("North <-> West",    new PipeConnections(true,  false, false, true)),
-                    '7' => ("South <-> West",    new PipeConnections(false, false, true,  true)),
-                    'F' => ("South <-> East",    new PipeConnections(false, true,  true,  false)),
-                    '.' => ("No connections",    new PipeConnections(false, false, false, false)),
-                    'S' => ("Starting location", new PipeConnections(true,  true,  true,  true)),
-                    _ => throw new Exception($"Unknown pipe character: {character}")
+                {
+                    '|' => ("North <-> South", new List<Directions>{Directions.North, Directions.South}),
+                    '-' => ("East <-> West", new List<Directions>{Directions.East, Directions.West}),
+                    'L' => ("North <-> East", new List<Directions>{Directions.North, Directions.East}),
+                    'J' => ("North <-> West", new List<Directions>{Directions.North, Directions.West}),
+                    '7' => ("South <-> West", new List<Directions>{Directions.South, Directions.West}),
+                    'F' => ("South <-> East", new List<Directions>{Directions.South, Directions.East}),
+                    '.' => ("No connections", new List<Directions>()),
+                    'S' => ("Starting location", new List<Directions>{Directions.North, Directions.East, Directions.South, Directions.West}),
+                    _ => throw new Exception($"Unknown character: {character}")
+                };
+
+            public bool AcceptsConnectionFrom(Directions directionToAccept) =>
+                directionToAccept switch
+                {
+                    Directions.North => Connections.Contains(Directions.South),
+                    Directions.East => Connections.Contains(Directions.West),
+                    Directions.South => Connections.Contains(Directions.North),
+                    Directions.West => Connections.Contains(Directions.East),
+                    _ => throw new ArgumentOutOfRangeException(nameof(directionToAccept), directionToAccept, null)
                 };
         }
-        
-        private class PipeConnections
-        {
-            public bool North { get; init; }
-            public bool East { get; init; }
-            public bool South { get; init; }
-            public bool West { get; init; }
 
-            public PipeConnections(bool north, bool east, bool south, bool west)
-            {
-                North = north;
-                East = east;
-                South = south;
-                West = west;
-            }
-            
-            public bool CanConnectTo(PipeConnections connections)
-            {
-                if (North && connections.South) return true;
-                return East && connections.West;
-            }
+        private enum Directions
+        {
+            North,
+            East,
+            South,
+            West
         }
     }
 }
