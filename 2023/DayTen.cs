@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode._2023;
+﻿using System.Numerics;
+
+namespace AdventOfCode._2023;
 
 public class DayTen : ExerciseBase
 {
@@ -12,6 +14,7 @@ public class DayTen : ExerciseBase
     [Test]
     public override void PartOne()
     {
+        _pipeNetwork.GeneratePath();
         Console.WriteLine($"Day Ten, Part One Answer:");
     }
 
@@ -43,29 +46,35 @@ public class DayTen : ExerciseBase
 
                     if (inputChar == 'S') _startingLocation = (y, x);
 
-                    _pipes[y, x] = new Pipe(inputChar);
+                    _pipes[y, x] = new Pipe(inputChar, (y, x));
                 }
             }
         }
 
-        private void GeneratePath()
+        public void GeneratePath()
         {
-            var found = new Stack<(int y, int x)>();
+            var found = new Stack<Pipe>();
+            var currentDistance = 0;
 
-            foreach (var direction in Enum.GetValues(typeof(Directions)))
+            found.Push(GetPipeAtLocation(_startingLocation.y, _startingLocation.x));
+
+            do
             {
-                //var currentPipe = _pipes
-            }
+                var currentPipe = found.Pop();
+                if (currentDistance > 0 && currentPipe.Location == _startingLocation) break;
+                currentPipe.SetDistance(currentDistance++);
+
+                FindValidDirectionsFromPoint(currentPipe);
+            } while (found.Count > 0);
 
             return;
 
-            List<Directions> FindValidDirectionsFromPoint(int y, int x)
+            void FindValidDirectionsFromPoint(Pipe pipe)
             {
-                foreach (var VARIABLE in GetValidSurroundingPipes(y, x))
+                foreach (var surroundingPipe in GetValidSurroundingPipes(pipe.Location.y, pipe.Location.x))
                 {
-                    
+                    found!.Push(surroundingPipe);
                 }
-
             }
         }
 
@@ -78,6 +87,8 @@ public class DayTen : ExerciseBase
                 Directions.West => _pipes[y, x - 1],
                 _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
             };
+        
+        private Pipe GetPipeAtLocation(int y, int x) => _pipes[y, x];
         
         private IEnumerable<Pipe> GetValidSurroundingPipes(int y, int x)
         {
@@ -94,12 +105,17 @@ public class DayTen : ExerciseBase
         private class Pipe
         {
             public string Description;
-            public List<Directions> Connections;
+            public readonly List<Directions> Connections;
+            public readonly (int y, int x) Location;
+            public int Step;
 
-            public Pipe(char character)
+            public Pipe(char character, (int y, int x) location)
             {
                 (Description, Connections) = CharToPipe(character);
+                Location = location;
             }
+            
+            public void SetDistance(int step) => Step = step;
 
             private (string description, List<Directions> directions) CharToPipe(char character) =>
                 character switch
