@@ -14,8 +14,7 @@ public class DayTen : ExerciseBase
     [Test]
     public override void PartOne()
     {
-        _pipeNetwork.GeneratePath();
-        Console.WriteLine($"Day Ten, Part One Answer:");
+        Console.WriteLine($"Day Ten, Part One Answer: {_pipeNetwork.GeneratePath()}");
     }
 
     [Test]
@@ -26,7 +25,7 @@ public class DayTen : ExerciseBase
 
     private class PipeNetwork
     {
-        private Pipe[,] _pipes = null!;
+        private Pipe?[,] _pipes = null!;
         private (int y, int x) _startingLocation;
         
         public PipeNetwork(IReadOnlyList<string> input)
@@ -36,7 +35,7 @@ public class DayTen : ExerciseBase
 
         private void BuildPipeNetwork(IReadOnlyList<string> input)
         {
-            _pipes = new Pipe[input.Count, input[0].Length];
+            _pipes = new Pipe?[input.Count, input[0].Length];
 
             for (var y = 0; y < input.Count; y++)
             {
@@ -51,51 +50,60 @@ public class DayTen : ExerciseBase
             }
         }
 
-        public void GeneratePath()
+        public int GeneratePath()
         {
-            var found = new Stack<Pipe>();
+            var toVisit = new Stack<Pipe>();
+            var visited = new HashSet<Pipe>();
             var currentDistance = 0;
 
-            found.Push(GetPipeAtLocation(_startingLocation.y, _startingLocation.x));
+            toVisit.Push(GetPipeAtLocation(_startingLocation.y, _startingLocation.x)!);
 
             do
             {
-                var currentPipe = found.Pop();
+                var currentPipe = toVisit.Pop();
+                visited.Add(currentPipe);
                 if (currentDistance > 0 && currentPipe.Location == _startingLocation) break;
-                currentPipe.SetDistance(currentDistance++);
+                currentPipe.SetDistance(currentDistance);
 
                 FindValidDirectionsFromPoint(currentPipe);
-            } while (found.Count > 0);
+                currentDistance++;
+            } while (toVisit.Count > 0);
 
-            return;
+            return visited.Max(p => p.Step) / 2;
 
             void FindValidDirectionsFromPoint(Pipe pipe)
             {
                 foreach (var surroundingPipe in GetValidSurroundingPipes(pipe.Location.y, pipe.Location.x))
                 {
-                    found!.Push(surroundingPipe);
+                    if (visited.Contains(surroundingPipe!)) continue;
+                    toVisit.Push(surroundingPipe!);
                 }
             }
         }
 
-        private Pipe GetPipeAtDirection(Directions direction, int y, int x) =>
+        private Pipe? GetPipeAtDirection(Directions direction, int y, int x) =>
             direction switch
             {
-                Directions.North => _pipes[y - 1, x],
-                Directions.East => _pipes[y, x + 1],
-                Directions.South => _pipes[y + 1, x],
-                Directions.West => _pipes[y, x - 1],
+                Directions.North => GetPipeAtLocation(y - 1, x),
+                Directions.East => GetPipeAtLocation(y, x + 1),
+                Directions.South => GetPipeAtLocation(y + 1, x),
+                Directions.West => GetPipeAtLocation(y, x - 1),
                 _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
             };
-        
-        private Pipe GetPipeAtLocation(int y, int x) => _pipes[y, x];
-        
-        private IEnumerable<Pipe> GetValidSurroundingPipes(int y, int x)
+
+        private Pipe? GetPipeAtLocation(int y, int x)
         {
-            foreach (var direction in _pipes[y, x].Connections)
+            if (y < 0 || y >= _pipes.GetLength(0) || x < 0 || x >= _pipes.GetLength(1)) return null;
+            
+            return _pipes[y, x];
+        }
+
+        private IEnumerable<Pipe?> GetValidSurroundingPipes(int y, int x)
+        {
+            foreach (var direction in _pipes[y, x]!.Connections)
             {
                 var pipeToCheck = GetPipeAtDirection(direction, y, x);
-                if (pipeToCheck.AcceptsConnectionFrom(direction))
+                if (pipeToCheck is not null && pipeToCheck.AcceptsConnectionFrom(direction))
                 {
                     yield return pipeToCheck;
                 }
