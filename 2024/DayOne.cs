@@ -10,20 +10,19 @@ public class DayOne : ExerciseBase
     [Test]
     public override void PartOne()
     {
-        Console.WriteLine($"Day One, Part One Answer: {_locationLists.Process()}");
+        Console.WriteLine($"Day One, Part One Answer: {_locationLists.StepOne()}");
     }
 
     [Test]
     public override void PartTwo()
     {
-        throw new NotImplementedException();
+        Console.WriteLine($"Day One, Part Two Answer: {_locationLists.StepTwo()}");
     }
 
     private class LocationLists
     {
         private readonly List<int> _listOne = [];
         private readonly List<int> _listTwo = [];
-        private int _totalDifference;
 
         public LocationLists(IReadOnlyList<string> rawList)
         {
@@ -36,25 +35,33 @@ public class DayOne : ExerciseBase
             }
         }
 
-        public int Process()
+        public int StepOne()
         {
+            var totalDifference = 0;
+
             while (_listOne.Count != 0)
             {
-                NextDifference();
+                totalDifference += NextDifference();
             }
 
-            return _totalDifference;
+            return totalDifference;
         }
 
-        private void NextDifference()
+        public int StepTwo() => _listOne.Sum(entry => entry * Occurrences(entry));
+
+        private int NextDifference()
         {
             var listOneLowest = _listOne.Min();
             var listTwoLowest = _listTwo.Min();
 
-            _totalDifference += Math.Abs(listOneLowest - listTwoLowest);
+            var difference = Math.Abs(listOneLowest - listTwoLowest);
 
             _listOne.Remove(listOneLowest);
             _listTwo.Remove(listTwoLowest);
+
+            return difference;
         }
+
+        private int Occurrences(int value) => _listTwo.Count(x => x == value);
     }
 }
