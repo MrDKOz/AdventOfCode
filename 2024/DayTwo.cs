@@ -10,10 +10,7 @@ public class DayTwo : ExerciseBase
     }
 
     [Test, Description("Answer: 490")]
-    public override void PartOne()
-    {
-        Console.WriteLine($"Day Two, Part One Answer: {_report.SafeEntries()}");
-    }
+    public override void PartOne() => Console.WriteLine($"Day Two, Part One Answer: {_report.SafeEntries()}");
 
     [Test]
     public override void PartTwo()
@@ -24,13 +21,18 @@ public class DayTwo : ExerciseBase
     private class Report
     {
         private readonly List<ReportEntry> _entries;
-
-        public Report(IReadOnlyList<string> rawList)
-        {
-            _entries = rawList.Select(entry => new ReportEntry(entry)).ToList();
-        }
-
         public int SafeEntries() => _entries.Count(entry => entry.IsSafe());
+
+        public Report(IReadOnlyList<string> rawList) =>
+            _entries = rawList.Select(entry => new ReportEntry(entry)).ToList();
+
+        public void ProblemDampener()
+        {
+            foreach (var entry in _entries.Where(entry => !entry.IsSafe()))
+            {
+
+            }
+        }
     }
 
     private class ReportEntry(string entry)
@@ -48,6 +50,13 @@ public class DayTwo : ExerciseBase
             // Console.WriteLine($"Ascending: {allAscending}, Descending: {allDescending}, Safe Differences: {safeLevelDifferences}");
 
             return (allAscending || allDescending) && safeLevelDifferences;
+        }
+
+        public bool IsSafeWithDampening()
+        {
+            if (IsSafe()) return true;
+
+
         }
 
         private bool AllAscending() => _readings.SequenceEqual(_readings.OrderBy(x => x));
