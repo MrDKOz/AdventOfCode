@@ -1,3 +1,5 @@
+import { Box, Typography, Paper, Alert } from "@mui/material";
+
 interface OutputBoxProps {
   title: string;
   output: string | null;
@@ -6,29 +8,26 @@ interface OutputBoxProps {
 
 export function OutputBox({ title, error, output }: OutputBoxProps) {
   return (
-    <div>
-      <h2 style={{ fontSize: "1rem", marginBottom: "0.25rem" }}>{title}</h2>
+    <Box>
+      <Typography variant="subtitle1" sx={{ mb: 1 }}>
+        {title}
+      </Typography>
 
-      <div
-        style={{
-          minHeight: "2rem",
-          padding: "0.5rem",
-          borderRadius: "4px",
-          border: "1px solid #e5e7eb",
-          background: "#f9fafb",
-          fontFamily: "monospace",
-          whiteSpace: "pre-wrap",
-          color: "#000000ff",
-        }}
-      >
-        {error && <span style={{ color: "#b91c1c" }}>Error: {error}</span>}
+      <Paper elevation={3} sx={{ p: 1, whiteSpace: 'pre-wrap' }}>
+        {error && (
+          <Alert severity="error" sx={{ p: 0, mt: 0, mb: 0 }}>
+            Error: {error}
+          </Alert>
+        )}
 
-        {!error && output !== null && <span>{output}</span>}
+        {!error && output !== null && <Typography component="span">{output}</Typography>}
 
         {!error && output === null && (
-          <span style={{ color: "#000000ff" }}>No output yet.</span>
+          <Typography component="span" color="text.secondary">
+            No output yet.
+          </Typography>
         )}
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 }

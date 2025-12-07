@@ -3,6 +3,7 @@ import type { SolverFunction } from "../types/SolverFunction";
 import { RunControls } from "./RunControls";
 import { PuzzleInput } from "./PuzzleInput";
 import { usePuzzleState } from "../hooks/usePuzzleState";
+import { Stack, Typography } from "@mui/material";
 
 interface DayTemplateProps {
     title: string;
@@ -32,14 +33,13 @@ function DayTemplate({
     } = usePuzzleState({ solverPart1, solverPart2 });
 
     return (
-        <div style={{
-            width: "100%",
-            boxSizing: "border-box",
-            flexDirection: "column",
-        }}>
-            <h1 style={{ marginBottom: "0.5rem" }}>{title}</h1>
+        <Stack direction="column" spacing={2}>
+            <Typography variant="h2">{title}</Typography>
+
             {description && (
-                <p style={{ marginBottom: "1rem", color: "#4b5563" }}>{description}</p>
+                <Typography variant="h5" color="text.secondary">
+                    {description}
+                </Typography>
             )}
 
             <PuzzleInput value={input} onChange={setInput} />
@@ -50,11 +50,9 @@ function DayTemplate({
                 onClear={clear}
             />
 
-            <div style={{ display: "grid", gap: "0.75rem" }}>
-                <OutputBox title="Part 1 Output" output={outputPart1} error={errorPart1} />
-                <OutputBox title="Part 2 Output" output={outputPart2} error={errorPart2} />
-            </div>
-        </div>
+            <OutputBox title="Part 1 Output" output={outputPart1} error={errorPart1} />
+            <OutputBox title="Part 2 Output" output={outputPart2} error={errorPart2} />
+        </Stack>
     );
 }
 

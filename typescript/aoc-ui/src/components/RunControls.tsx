@@ -1,3 +1,5 @@
+import { Button, Stack } from "@mui/material";
+
 interface RunControlsProps {
   onRunPart1: () => void;
   onRunPart2: () => void;
@@ -14,50 +16,17 @@ function RunControls({
   part2Label = "Run Part 2",
 }: RunControlsProps) {
   return (
-    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-      <button
-        onClick={onRunPart1}
-        style={{
-          padding: "0.5rem 1rem",
-          borderRadius: "4px",
-          border: "none",
-          background: "#7c3aed",
-          color: "white",
-          cursor: "pointer",
-          fontWeight: 600,
-        }}
-      >
+    <Stack direction="row" spacing={1} mb={2}>
+      <Button variant="contained" color="primary" onClick={onRunPart1}>
         {part1Label}
-      </button>
-
-      <button
-        onClick={onRunPart2}
-        style={{
-          padding: "0.5rem 1rem",
-          borderRadius: "4px",
-          border: "none",
-          background: "#2563eb",
-          color: "white",
-          cursor: "pointer",
-          fontWeight: 600,
-        }}
-      >
+      </Button>
+      <Button variant="contained" color="secondary" onClick={onRunPart2}>
         {part2Label}
-      </button>
-
-      <button
-        onClick={onClear}
-        style={{
-          padding: "0.5rem 1rem",
-          borderRadius: "4px",
-          border: "none",
-          background: "red",
-          cursor: "pointer",
-        }}
-      >
+      </Button>
+      <Button variant="outlined" color="error" onClick={onClear}>
         Clear
-      </button>
-    </div>
+      </Button>
+    </Stack>
   );
 }
 
