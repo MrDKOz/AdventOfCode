@@ -1,6 +1,5 @@
 import { useState } from "react";
-
-type SolverFunction = (input: string) => string;
+import type { SolverFunction } from "../types/SolverFunction";
 
 interface UsePuzzleStateArgs {
   solverPart1: SolverFunction;
